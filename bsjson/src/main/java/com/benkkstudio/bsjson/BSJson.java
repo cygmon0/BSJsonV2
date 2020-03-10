@@ -2,6 +2,7 @@ package com.benkkstudio.bsjson;
 
 
 import android.app.Activity;
+import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -10,38 +11,36 @@ import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.StringRequestListener;
 import com.benkkstudio.bsjson.Interface.BSJsonV2Listener;
+import com.benkkstudio.bsjson.utils.BSShared;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import androidx.annotation.NonNull;
 
 public class BSJson {
     public static final int METHOD_POST = 0;
     public static final int METHOD_GET = 1;
-    private Activity activity;
+    private static final String IS_VERIFIED = "IS_VERIFIED";
+    private Context context;
     private String server;
     private JsonObject jsObj;
     private BSJsonV2Listener bsJsonV2Listener;
     private int method;
-    private BSJson(Activity activity,
+    private BSJson(Context context,
                    String server,
                    JsonObject jsObj,
                    BSJsonV2Listener bsJsonV2Listener,
                    int method) {
-        this.activity = activity;
+        this.context = context;
         this.server = server;
         this.jsObj = jsObj;
         this.bsJsonV2Listener = bsJsonV2Listener;
         this.method = method;
-        if(Constant.isVerified){
+        if(BSShared.getSharedPref(context).contains(IS_VERIFIED)){
             loadNow();
-            if (Constant.enableLogging){
-                Log.d("BSJson : ", "Is Verified");
-            }
         } else {
             verifyNow();
-            if (Constant.enableLogging){
-                Log.d("BSJson : ", "Not Verified");
-            }
         }
     }
     public static class initializing {
@@ -76,14 +75,12 @@ public class BSJson {
                     @Override
                     public void onResponse(String response) {
                         loadNow();
-                        Constant.isVerified = true;
-                        Log.d("BSJson : ", "APIs VERIFED");
+                        BSShared.getSharedPref(context).write("IS_VERIFIED", true);
                     }
 
                     @Override
                     public void onError(ANError error) {
-                        Constant.isVerified = false;
-                        Toast.makeText(activity, "Your purchase code not valid", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "Your purchase code not valid", Toast.LENGTH_SHORT).show();
                     }
                 });
 
@@ -154,13 +151,13 @@ public class BSJson {
     }
 
     public static class Builder {
-        private Activity activity;
+        private Context context;
         private String server;
         private JsonObject jsObj;
         private BSJsonV2Listener bsJsonV2Listener;
         private int method;
-        public Builder(Activity activity) {
-            this.activity = activity;
+        public Builder(Context context) {
+            this.context = context;
         }
 
         @NonNull
@@ -187,7 +184,7 @@ public class BSJson {
         }
 
         public BSJson load() {
-            return new BSJson(activity, server, jsObj, bsJsonV2Listener, method);
+            return new BSJson(context, server, jsObj, bsJsonV2Listener, method);
         }
     }
 }

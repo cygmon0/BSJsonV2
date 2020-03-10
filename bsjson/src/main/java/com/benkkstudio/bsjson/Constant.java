@@ -7,6 +7,5 @@ import java.io.Serializable;
 public class Constant implements Serializable {
     public static AsyncHttpClient client;
     public static String purchaseCode;
-    public static boolean isVerified;
     public static boolean enableLogging;
 }
