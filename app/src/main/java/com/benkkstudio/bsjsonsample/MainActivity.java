@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
         bsObject.addProperty("method_name", "settings");
         new BSJson.Builder(this)
                 .setObject(bsObject.getProperty())
-                .setServer("https://benkkstudio.xyz/bsvideostatus/api.php")
+                .setServer("http://192.168.1.50/codeigniter2/api")
                 .setMethod(BSJson.METHOD_POST)
                 .load();
     }

@@ -88,8 +88,7 @@ public class BSJson {
 
     private void loadNow() {
         if(jsObj != null){
-                AndroidNetworking.post(server)
-                        .addBodyParameter("data", Helpers.toBase64(jsObj.toString()))
+                AndroidNetworking.post(server + "?data" + Helpers.toBase64(jsObj.toString()))
                         .setPriority(Priority.MEDIUM)
                         .build()
                         .getAsString(new StringRequestListener() {
