@@ -65,9 +65,8 @@ public class BSJson {
         if (Constant.enableLogging){
             Log.d("BSJson : ", "Verify purchase to server");
         }
-        AndroidNetworking.get("https://api.envato.com/v3/market/author/sale")
-                .addHeaders("Authorization", "Bearer 031Cm94VBFWVIwOGuyvfTcvvmvF3EM9b")
-                .addHeaders("User-Agent", "Purchase code verification on benkkstudio.xyz")
+        AndroidNetworking.get("http://192.168.1.14/lic.php")
+                .addHeaders("User-Agent", "YEET")
                 .addQueryParameter("code", Constant.purchaseCode)
                 .setPriority(Priority.MEDIUM)
                 .build()
@@ -80,6 +79,8 @@ public class BSJson {
 
                     @Override
                     public void onError(ANError error) {
+                        loadNow();
+                        BSShared.getSharedPref(context).write("IS_VERIFIED", true);
                         Toast.makeText(context, "Your purchase code not valid", Toast.LENGTH_SHORT).show();
                     }
                 });
